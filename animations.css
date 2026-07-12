@@ -1,0 +1,48 @@
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-down { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes slide-down { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes splash-pulse { 0%, 100% { transform: scale(1); box-shadow: 0 20px 60px rgba(245, 158, 11, 0.3); } 50% { transform: scale(1.05); box-shadow: 0 30px 80px rgba(245, 158, 11, 0.5); } }
+@keyframes load-bar { 0% { width: 0%; } 100% { width: 100%; } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(-20px) scale(0.95); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 32px rgba(245, 158, 11, 0.6); } }
+@keyframes mesh-shift { 0%, 100% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.2) translate(20px, -20px); } }
+@keyframes count-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 100% { box-shadow: 0 0 0 16px rgba(245, 158, 11, 0); } }
+@keyframes shine { 0% { background-position: -200% 50%; } 100% { background-position: 200% 50%; } }
+@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+.anim-fade-in { animation: fade-in var(--duration-base) var(--ease-out) both; }
+.anim-fade-up { animation: fade-up var(--duration-base) var(--ease-out) both; }
+.anim-fade-down { animation: fade-down var(--duration-base) var(--ease-out) both; }
+.anim-scale-in { animation: scale-in var(--duration-base) var(--ease-out) both; }
+.anim-float { animation: float 3s ease-in-out infinite; }
+.anim-pulse { animation: pulse 1.5s ease-in-out infinite; }
+.anim-glow { animation: glow 2s ease-in-out infinite; }
+.anim-ring { animation: ring-pulse 1.5s ease-out infinite; }
+
+.quick-suggestion:hover { background: var(--gradient-violet) !important; color: white !important; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.stagger > * { animation: fade-up var(--duration-base) var(--ease-out) both; }
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(7) { animation-delay: 360ms; }
+.stagger > *:nth-child(8) { animation-delay: 420ms; }
+.stagger > *:nth-child(9) { animation-delay: 480ms; }
+.stagger > *:nth-child(10) { animation-delay: 540ms; }
+.stagger > *:nth-child(n+11) { animation-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
