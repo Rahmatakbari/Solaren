@@ -1,0 +1,40 @@
+/**
+ * Peak Sun Hours Database by location (Afghanistan & common regions).
+ * Average daily equivalent sun hours for sizing calculations.
+ */
+export const LOCATIONS = [
+    { id: 'kabul',     name: 'کابل',     province: 'کابل',     psh: 5.5 },
+    { id: 'herat',     name: 'هرات',     province: 'هرات',     psh: 5.8 },
+    { id: 'mazar',     name: 'مزار شریف', province: 'بلخ',      psh: 5.3 },
+    { id: 'kandahar',  name: 'قندهار',   province: 'قندهار',   psh: 6.0 },
+    { id: 'jalalabad', name: 'جلال‌آباد', province: 'ننگرهار',  psh: 5.4 },
+    { id: 'balkh',     name: 'بلخ',      province: 'بلخ',      psh: 5.3 },
+    { id: 'ghazni',    name: 'غزنی',     province: 'غزنی',     psh: 5.6 },
+    { id: 'bamyan',    name: 'بامیان',   province: 'بامیان',   psh: 5.4 },
+    { id: 'kunduz',    name: 'کندز',     province: 'کندز',     psh: 5.2 },
+    { id: 'nangarhar', name: 'ننگرهار',  province: 'ننگرهار',  psh: 5.4 },
+    { id: 'parwan',    name: 'پروان',    province: 'پروان',    psh: 5.5 },
+    { id: 'takhar',    name: 'تخار',     province: 'تخار',     psh: 5.2 },
+    { id: 'badakhshan',name: 'بدخشان',   province: 'بدخشان',   psh: 5.0 },
+    { id: 'faryab',    name: 'فاریاب',   province: 'فاریاب',   psh: 5.4 },
+    { id: 'jawzjan',   name: 'جوزجان',   province: 'جوزجان',   psh: 5.3 },
+    { id: 'helmand',   name: 'هلمند',    province: 'هلمند',    psh: 6.1 },
+    { id: 'zabul',     name: 'زابل',     province: 'زابل',     psh: 6.0 },
+    { id: 'paktia',    name: 'پکتیا',    province: 'پکتیا',    psh: 5.5 },
+    { id: 'paktika',   name: 'پکتیکا',   province: 'پکتیکا',   psh: 5.7 },
+    { id: 'khost',     name: 'خوست',     province: 'خوست',     psh: 5.5 },
+    { id: 'logar',     name: 'لوگر',     province: 'لوگر',     psh: 5.5 },
+    { id: 'wardak',    name: 'وردک',     province: 'وردک',     psh: 5.5 },
+    { id: 'kapisa',    name: 'کاپیسا',   province: 'کاپیسا',   psh: 5.4 },
+    { id: 'panjshir',  name: 'پنجشیر',   province: 'پنجشیر',   psh: 5.4 },
+    { id: 'daikundi',  name: 'دایکندی',  province: 'دایکندی',  psh: 5.6 },
+    { id: 'urozgan',   name: 'ارزگان',   province: 'ارزگان',   psh: 5.9 },
+    { id: 'ghor',      name: 'غور',      province: 'غور',      psh: 5.6 },
+    { id: 'baghlan',   name: 'بغلان',    province: 'بغلان',    psh: 5.3 },
+    { id: 'samangan',  name: 'سمنگان',   province: 'سمنگان',   psh: 5.4 },
+    { id: 'sar-e-pol', name: 'سرپل',     province: 'سرپل',     psh: 5.4 },
+    { id: 'nimroz',    name: 'نیمروز',   province: 'نیمروز',   psh: 6.2 },
+    { id: 'farah',     name: 'فراه',     province: 'فراه',     psh: 6.0 },
+    { id: 'badghis',   name: 'بادغیس',   province: 'بادغیس',   psh: 5.7 },
+    { id: 'laghman',   name: 'لغمان',    province: 'لغمان',    psh: 5.4 }
+];
