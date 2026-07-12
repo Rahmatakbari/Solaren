@@ -1,0 +1,425 @@
+/* ============================================
+   Solaren v6.0 — Ultra Premium Design System
+   بازسازی کامل - ۱۴۰۵
+   ============================================ */
+
+:root {
+    /* === Brand Colors (پالت خورشیدی حرفه‌ای) === */
+    --c-sun-50:  #fffbeb;
+    --c-sun-100: #fef3c7;
+    --c-sun-200: #fde68a;
+    --c-sun-300: #fcd34d;
+    --c-sun-400: #fbbf24;
+    --c-sun-500: #f59e0b;
+    --c-sun-600: #d97706;
+    --c-sun-700: #b45309;
+    --c-sun-800: #92400e;
+    --c-sun-900: #78350f;
+
+    --c-sky-50:  #f0f9ff;
+    --c-sky-100: #e0f2fe;
+    --c-sky-200: #bae6fd;
+    --c-sky-300: #7dd3fc;
+    --c-sky-400: #38bdf8;
+    --c-sky-500: #0ea5e9;
+    --c-sky-600: #0284c7;
+    --c-sky-700: #0369a1;
+    --c-sky-800: #075985;
+    --c-sky-900: #0c4a6e;
+
+    --c-emerald-50:  #ecfdf5;
+    --c-emerald-100: #d1fae5;
+    --c-emerald-200: #a7f3d0;
+    --c-emerald-300: #6ee7b7;
+    --c-emerald-400: #34d399;
+    --c-emerald-500: #10b981;
+    --c-emerald-600: #059669;
+    --c-emerald-700: #047857;
+    --c-emerald-800: #065f46;
+
+    --c-violet-50:  #f5f3ff;
+    --c-violet-100: #ede9fe;
+    --c-violet-200: #ddd6fe;
+    --c-violet-300: #c4b5fd;
+    --c-violet-400: #a78bfa;
+    --c-violet-500: #8b5cf6;
+    --c-violet-600: #7c3aed;
+    --c-violet-700: #6d28d9;
+
+    --c-pink-50:  #fdf2f8;
+    --c-pink-100: #fce7f3;
+    --c-pink-200: #fbcfe8;
+    --c-pink-300: #f9a8d4;
+    --c-pink-400: #f472b6;
+    --c-pink-500: #ec4899;
+    --c-pink-600: #db2777;
+
+    --c-cyan-50:  #ecfeff;
+    --c-cyan-100: #cffafe;
+    --c-cyan-200: #a5f3fc;
+    --c-cyan-300: #67e8f9;
+    --c-cyan-400: #22d3ee;
+    --c-cyan-500: #06b6d4;
+    --c-cyan-600: #0891b2;
+
+    --c-red-50:  #fef2f2;
+    --c-red-100: #fee2e2;
+    --c-red-200: #fecaca;
+    --c-red-300: #fca5a5;
+    --c-red-400: #f87171;
+    --c-red-500: #ef4444;
+    --c-red-600: #dc2626;
+
+    --c-amber-50:  #fffbeb;
+    --c-amber-100: #fef3c7;
+    --c-amber-500: #f59e0b;
+    --c-amber-600: #d97706;
+
+    --c-orange-50:  #fff7ed;
+    --c-orange-100: #ffedd5;
+    --c-orange-500: #f97316;
+    --c-orange-600: #ea580c;
+
+    --c-indigo-50:  #eef2ff;
+    --c-indigo-500: #6366f1;
+    --c-indigo-600: #4f46e5;
+    --c-indigo-700: #4338ca;
+
+    --c-teal-50:  #f0fdfa;
+    --c-teal-500: #14b8a6;
+    --c-teal-600: #0d9488;
+
+    --c-lime-500: #84cc16;
+    --c-rose-500: #f43f5e;
+    --c-fuchsia-500: #d946ef;
+    --c-yellow-500: #eab308;
+
+    /* === Neutrals — تم روشن === */
+    --c-white:   #ffffff;
+    --c-gray-0:  #ffffff;
+    --c-gray-50: #f8fafc;
+    --c-gray-100: #f1f5f9;
+    --c-gray-200: #e2e8f0;
+    --c-gray-300: #cbd5e1;
+    --c-gray-400: #94a3b8;
+    --c-gray-500: #64748b;
+    --c-gray-600: #475569;
+    --c-gray-700: #334155;
+    --c-gray-800: #1e293b;
+    --c-gray-900: #0f172a;
+    --c-gray-950: #020617;
+
+    /* === Semantic Surface === */
+    --bg-base: var(--c-gray-50);
+    --bg-elevated: var(--c-white);
+    --bg-soft: var(--c-gray-100);
+    --bg-overlay: rgba(15, 23, 42, 0.5);
+    --bg-glass: rgba(255, 255, 255, 0.75);
+    --bg-glass-strong: rgba(255, 255, 255, 0.9);
+
+    --surface-1: var(--c-white);
+    --surface-2: var(--c-gray-50);
+    --surface-3: var(--c-gray-100);
+    --surface-4: var(--c-gray-200);
+
+    --border-soft: rgba(15, 23, 42, 0.06);
+    --border-default: rgba(15, 23, 42, 0.1);
+    --border-strong: rgba(15, 23, 42, 0.16);
+    --border-focus: var(--c-sun-500);
+
+    --text-primary: var(--c-gray-900);
+    --text-secondary: var(--c-gray-600);
+    --text-tertiary: var(--c-gray-500);
+    --text-disabled: var(--c-gray-400);
+    --text-inverse: var(--c-white);
+
+    /* === Brand Gradients === */
+    --grad-sun: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%);
+    --grad-sun-soft: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+    --grad-sun-radial: radial-gradient(circle at 30% 0%, #fbbf24, #f59e0b, #f97316);
+    --grad-sky: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    --grad-sky-soft: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+    --grad-emerald: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    --grad-emerald-soft: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
+    --grad-violet: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    --grad-violet-soft: linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 100%);
+    --grad-pink: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    --grad-cyan: linear-gradient(135deg, #67e8f9 0%, #06b6d4 100%);
+    --grad-red: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+    --grad-indigo: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+    --grad-teal: linear-gradient(135deg, #5eead4 0%, #0d9488 100%);
+    --grad-amber: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
+
+    /* === Special Gradients === */
+    --grad-rainbow: linear-gradient(135deg, #fbbf24 0%, #f97316 20%, #ec4899 40%, #8b5cf6 60%, #0ea5e9 80%, #10b981 100%);
+    --grad-conic: conic-gradient(from 0deg, #fbbf24, #f97316, #ec4899, #8b5cf6, #0ea5e9, #10b981, #fbbf24);
+    --grad-mesh: radial-gradient(at 20% 0%, rgba(245, 158, 11, 0.12), transparent 50%),
+                 radial-gradient(at 80% 100%, rgba(14, 165, 233, 0.08), transparent 50%),
+                 radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.05), transparent 70%);
+    --grad-hero: radial-gradient(ellipse at top, rgba(254, 243, 199, 0.6), transparent 60%),
+                 radial-gradient(ellipse at bottom right, rgba(186, 230, 253, 0.4), transparent 50%);
+    --grad-page: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    --grad-card: linear-gradient(145deg, rgba(255,255,255,1), rgba(248, 250, 252, 0.8));
+    --grad-card-hover: linear-gradient(145deg, rgba(255,255,255,1), rgba(241, 245, 249, 0.6));
+    --grad-glass: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    --grad-shine: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%);
+
+    /* === Shadows (سیستم استاندارد) === */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 8px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 20px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+    --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.10), 0 8px 16px rgba(15, 23, 42, 0.06);
+    --shadow-2xl: 0 30px 60px rgba(15, 23, 42, 0.14), 0 10px 20px rgba(15, 23, 42, 0.08);
+    --shadow-inner: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+
+    /* Brand shadows */
+    --shadow-sun: 0 8px 24px rgba(245, 158, 11, 0.25), 0 2px 8px rgba(245, 158, 11, 0.15);
+    --shadow-sun-lg: 0 16px 40px rgba(245, 158, 11, 0.35), 0 4px 12px rgba(245, 158, 11, 0.2);
+    --shadow-sky: 0 8px 24px rgba(14, 165, 233, 0.25), 0 2px 8px rgba(14, 165, 233, 0.15);
+    --shadow-emerald: 0 8px 24px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(16, 185, 129, 0.15);
+    --shadow-violet: 0 8px 24px rgba(139, 92, 246, 0.25), 0 2px 8px rgba(139, 92, 246, 0.15);
+    --shadow-pink: 0 8px 24px rgba(236, 72, 153, 0.25), 0 2px 8px rgba(236, 72, 153, 0.15);
+    --shadow-cyan: 0 8px 24px rgba(6, 182, 212, 0.25), 0 2px 8px rgba(6, 182, 212, 0.15);
+
+    /* Focus shadow */
+    --shadow-focus: 0 0 0 4px rgba(245, 158, 11, 0.15);
+    --shadow-focus-sky: 0 0 0 4px rgba(14, 165, 233, 0.15);
+
+    /* === Radius === */
+    --r-xs: 4px;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+    --r-2xl: 24px;
+    --r-3xl: 32px;
+    --r-4xl: 40px;
+    --r-full: 9999px;
+
+    /* === Spacing (4px grid) === */
+    --sp-0: 0;
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-7: 28px;
+    --sp-8: 32px;
+    --sp-9: 40px;
+    --sp-10: 48px;
+    --sp-11: 56px;
+    --sp-12: 64px;
+    --sp-14: 80px;
+    --sp-16: 96px;
+    --sp-20: 128px;
+
+    /* === Typography === */
+    --font-sans: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+    --font-mono: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+    --font-display: 'Vazirmatn', system-ui, sans-serif;
+
+    --fs-2xs: 10px;
+    --fs-xs: 11px;
+    --fs-sm: 12px;
+    --fs-base: 14px;
+    --fs-md: 15px;
+    --fs-lg: 17px;
+    --fs-xl: 20px;
+    --fs-2xl: 24px;
+    --fs-3xl: 30px;
+    --fs-4xl: 36px;
+    --fs-5xl: 44px;
+    --fs-6xl: 56px;
+    --fs-7xl: 72px;
+
+    --lh-tight: 1.15;
+    --lh-snug: 1.3;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.7;
+
+    --fw-thin: 300;
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --fw-extrabold: 800;
+    --fw-black: 900;
+
+    /* === Motion === */
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --dur-fastest: 100ms;
+    --dur-fast: 200ms;
+    --dur-base: 300ms;
+    --dur-slow: 500ms;
+    --dur-slower: 800ms;
+    --dur-slowest: 1200ms;
+
+    /* === Z-Index === */
+    --z-hide: -1;
+    --z-base: 0;
+    --z-elevated: 10;
+    --z-sticky: 100;
+    --z-dropdown: 200;
+    --z-overlay: 500;
+    --z-modal: 1000;
+    --z-popover: 1500;
+    --z-toast: 2000;
+    --z-splash: 9999;
+
+    /* === Layout === */
+    --header-h: 64px;
+    --bottom-nav-h: 72px;
+    --sidebar-w: 320px;
+    --content-max: 880px;
+    --content-narrow: 640px;
+
+    /* === Safe area === */
+    --safe-top: env(safe-area-inset-top, 0);
+    --safe-bottom: env(safe-area-inset-bottom, 0);
+    --safe-left: env(safe-area-inset-left, 0);
+    --safe-right: env(safe-area-inset-right, 0);
+}
+
+/* === Legacy aliases (سازگاری با کد قدیمی) === */
+:root {
+    --color-bg: var(--bg-base);
+    --color-bg-soft: var(--bg-soft);
+    --color-bg-elevated: var(--bg-elevated);
+    --color-surface: var(--surface-1);
+    --color-surface-2: var(--surface-2);
+    --color-surface-3: var(--surface-3);
+    --color-border: var(--border-default);
+    --color-border-strong: var(--border-strong);
+    --color-border-active: var(--border-focus);
+    --color-card-bg: var(--bg-glass);
+    --color-page-bg: var(--grad-page);
+    --color-text: var(--text-primary);
+    --color-text-2: var(--text-primary);
+    --color-text-muted: var(--text-secondary);
+    --color-text-dim: var(--text-tertiary);
+    --color-text-inverse: var(--text-inverse);
+
+    --color-sun-50: var(--c-sun-50);
+    --color-sun-100: var(--c-sun-100);
+    --color-sun-200: var(--c-sun-200);
+    --color-sun-300: var(--c-sun-300);
+    --color-sun-400: var(--c-sun-400);
+    --color-sun-500: var(--c-sun-500);
+    --color-sun-600: var(--c-sun-600);
+    --color-sun-700: var(--c-sun-700);
+    --color-sky-300: var(--c-sky-300);
+    --color-sky-400: var(--c-sky-400);
+    --color-sky-500: var(--c-sky-500);
+    --color-sky-600: var(--c-sky-600);
+    --color-emerald-400: var(--c-emerald-400);
+    --color-emerald-500: var(--c-emerald-500);
+    --color-emerald-600: var(--c-emerald-600);
+    --color-red-400: var(--c-red-400);
+    --color-red-500: var(--c-red-500);
+    --color-red-600: var(--c-red-600);
+    --color-amber-500: var(--c-amber-500);
+    --color-orange-500: var(--c-orange-500);
+    --color-orange-600: var(--c-orange-600);
+    --color-violet-400: var(--c-violet-400);
+    --color-violet-500: var(--c-violet-500);
+    --color-violet-600: var(--c-violet-600);
+    --color-pink-400: var(--c-pink-400);
+    --color-pink-500: var(--c-pink-500);
+    --color-cyan-400: var(--c-cyan-400);
+    --color-cyan-500: var(--c-cyan-500);
+
+    --gradient-sun: var(--grad-sun);
+    --gradient-sun-soft: var(--grad-sun-soft);
+    --gradient-sun-glow: var(--grad-sun);
+    --gradient-sky: var(--grad-sky);
+    --gradient-sky-soft: var(--grad-sky-soft);
+    --gradient-emerald: var(--grad-emerald);
+    --gradient-violet: var(--grad-violet);
+    --gradient-pink: var(--grad-pink);
+    --gradient-night: var(--grad-page);
+    --gradient-card: var(--grad-card);
+    --gradient-card-hover: var(--grad-card-hover);
+    --gradient-hero: var(--grad-hero);
+    --gradient-mesh: var(--grad-mesh);
+    --gradient-shimmer: var(--grad-shine);
+    --gradient-glow: var(--grad-mesh);
+
+    --space-1: var(--sp-1);
+    --space-2: var(--sp-2);
+    --space-3: var(--sp-3);
+    --space-4: var(--sp-4);
+    --space-5: var(--sp-5);
+    --space-6: var(--sp-6);
+    --space-7: var(--sp-7);
+    --space-8: var(--sp-8);
+    --space-9: var(--sp-9);
+    --space-10: var(--sp-10);
+    --space-11: var(--sp-11);
+
+    --radius-xs: var(--r-xs);
+    --radius-sm: var(--r-sm);
+    --radius-md: var(--r-md);
+    --radius-lg: var(--r-lg);
+    --radius-xl: var(--r-xl);
+    --radius-2xl: var(--r-2xl);
+    --radius-3xl: var(--r-3xl);
+    --radius-full: var(--r-full);
+
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.10);
+    --shadow-xl: 0 20px 60px rgba(15, 23, 42, 0.15);
+    --shadow-sun: 0 8px 24px rgba(245, 158, 11, 0.25);
+    --shadow-sun-lg: 0 12px 36px rgba(245, 158, 11, 0.45);
+    --shadow-sun-glow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+    --shadow-sky: 0 8px 24px rgba(14, 165, 233, 0.25);
+    --shadow-emerald: 0 8px 24px rgba(16, 185, 129, 0.25);
+    --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+    --font-family: var(--font-sans);
+    --font-size-xs: var(--fs-xs);
+    --font-size-sm: var(--fs-sm);
+    --font-size-md: var(--fs-md);
+    --font-size-base: var(--fs-base);
+    --font-size-lg: var(--fs-lg);
+    --font-size-xl: var(--fs-xl);
+    --font-size-2xl: var(--fs-2xl);
+    --font-size-3xl: var(--fs-3xl);
+    --font-size-4xl: var(--fs-4xl);
+    --font-size-5xl: var(--fs-5xl);
+    --font-size-6xl: var(--fs-6xl);
+
+    --line-height-tight: var(--lh-tight);
+    --line-height-normal: var(--lh-normal);
+    --line-height-relaxed: var(--lh-relaxed);
+
+    --header-height: var(--header-h);
+    --bottom-nav-height: var(--bottom-nav-h);
+    --sidebar-width: var(--sidebar-w);
+    --max-content-width: var(--content-max);
+    --safe-bottom: var(--safe-bottom);
+    --safe-top: var(--safe-top);
+
+    --ease-out: var(--ease-out);
+    --ease-in-out: var(--ease-in-out);
+    --ease-bounce: var(--ease-spring);
+    --duration-fast: var(--dur-fast);
+    --duration-base: var(--dur-base);
+    --duration-slow: var(--dur-slow);
+    --duration-slower: var(--dur-slower);
+
+    --z-base: 0;
+    --z-elevated: 10;
+    --z-sticky: 100;
+    --z-overlay: 500;
+    --z-modal: 1000;
+    --z-toast: 2000;
+    --z-splash: 9999;
+}
