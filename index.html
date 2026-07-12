@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f59e0b">
+    <meta name="description" content="Solaren - نرم‌افزار حرفه‌ای برآورد سیستم سولر — محاسبه دقیق، انتخاب تجهیزات، صدور فاکتور و گزارش‌دهی">
+    <meta name="keywords" content="سولر, انورتر, VFD, پنل خورشیدی, برآورد سولر, محاسبه سولر, باتری لیتیوم, انرژی خورشیدی, Solaren">
+    <meta name="author" content="Solaren">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Solaren">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- v6 Design System - باید اول لود شود (tokens) -->
+    <link rel="stylesheet" href="css/v6-design.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/v6-components.css">
+    <link rel="stylesheet" href="css/v6-layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/command-palette.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/solar-live.css">
+    <link rel="stylesheet" href="css/enhancements.css">
+
+    <title>Solaren — نرم‌افزار حرفه‌ای برآورد خورشیدی</title>
+
+    <!-- Service Worker v8.0.1 - آپدیت اجباری -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+            regs.forEach(function(reg) {
+                // اگر نسخه قدیمی است، unregister و hard reload
+                if (reg.active && !navigator.serviceWorker.controller) {
+                    console.log('🔄 Updating old service worker...');
+                    reg.unregister();
+                }
+            });
+        });
+    }
+    </script>
+</head>
+<body style="background-color:#f8fafc;color:#0f172a;margin:0;padding:0;min-height:100vh;font-family:'Vazirmatn',system-ui,sans-serif;">
+    <!-- Error handler برای نمایش خطاهای JavaScript -->
+    <script>
+    window.__solarenErrors = [];
+    window.addEventListener('error', function(e) {
+        var msg = e.message || 'خطای ناشناخته';
+        var file = e.filename ? e.filename.split('/').pop() : '';
+        var line = e.lineno || '';
+        window.__solarenErrors.push({msg: msg, file: file, line: line, time: Date.now()});
+        console.error('🔴 Solaren Error:', msg, file ? '(' + file + ':' + line + ')' : '');
+
+        // اگر صفحه خالی است، نمایش خطا
+        var view = document.getElementById('view');
+        if (view && view.innerHTML.length < 500) {
+            view.innerHTML = '<div style="max-width:480px;margin:40px auto;padding:24px;background:#fef2f2;border:2px solid #ef4444;border-radius:16px;color:#7f1d1d;font-family:Tahoma,sans-serif;direction:rtl;">' +
+                '<h2 style="margin:0 0 12px;font-size:20px;color:#dc2626;">⚠️ خطا در بارگذاری Solaren</h2>' +
+                '<p style="margin:0 0 12px;font-size:14px;line-height:1.7;direction:ltr;text-align:right;">' + (msg.replace(/</g, '&lt;')) + '</p>' +
+                (file ? '<p style="margin:0 0 12px;font-size:12px;color:#991b1b;">📁 فایل: ' + file + ' (خط ' + line + ')</p>' : '') +
+                '<hr style="margin:16px 0;border:none;border-top:1px solid #fecaca;">' +
+                '<h3 style="margin:0 0 8px;font-size:14px;color:#dc2626;">💡 راه‌حل:</h3>' +
+                '<ol style="margin:0;padding-right:20px;font-size:13px;line-height:1.9;">' +
+                '<li>DevTools را باز کنید (F12)</li>' +
+                '<li>به تب <strong>Application</strong> بروید</li>' +
+                '<li>از منوی چپ <strong>Service Workers</strong> را انتخاب کنید</li>' +
+                '<li>روی <strong>Unregister</strong> کلیک کنید</li>' +
+                '<li>از منوی چپ <strong>Storage</strong> → <strong>Clear site data</strong></li>' +
+                '<li>صفحه را با <strong>Ctrl+Shift+R</strong> رفرش کنید</li>' +
+                '</ol>' +
+                '<button onclick="location.reload(true)" style="margin-top:16px;width:100%;padding:12px;background:#dc2626;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;">🔄 تلاش مجدد</button>' +
+                '</div>';
+        }
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+        var reason = e.reason ? (e.reason.message || String(e.reason)) : 'ناشناخته';
+        window.__solarenErrors.push({msg: 'Promise: ' + reason, time: Date.now()});
+        console.error('🔴 Solaren Promise Error:', reason);
+    });
+    </script>
+
+    <!-- Babel لازم نیست - از js-es5/ استفاده می‌شود -->
+
+    <!-- اگر JS فعال باشه، splash فوری مخفی می‌شه -->
+    <script>
+        (function() {
+            var s = document.getElementById('splash');
+            if (s) s.classList.add('is-hidden');
+        })();
+    </script>
+    <noscript>
+        <style>
+            /* اگر JS غیرفعال باشه، splash بعد از 2 ثانیه با CSS محو می‌شه */
+            #splash { animation: splash-fade-out 0.5s 2s forwards !important; }
+            @keyframes splash-fade-out {
+                to { opacity: 0; visibility: hidden; pointer-events: none; }
+            }
+        </style>
+    </noscript>
+    <div class="app" id="app">
+
+        <!-- Splash Screen -->
+        <div class="splash" id="splash" aria-hidden="true">
+            <div class="splash__logo">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="solarenSun" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fde68a"/>
+                            <stop offset="50%" stop-color="#fbbf24"/>
+                            <stop offset="100%" stop-color="#f97316"/>
+                        </linearGradient>
+                        <linearGradient id="solarenPanel" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0ea5e9"/>
+                            <stop offset="100%" stop-color="#0284c7"/>
+                        </linearGradient>
+                        <radialGradient id="solarenGlow" cx="50%" cy="50%">
+                            <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+                            <stop offset="60%" stop-color="#fbbf24" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+                        </radialGradient>
+                        <filter id="solarenShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="2" result="blur"/>
+                            <feOffset dx="0" dy="1" result="offsetBlur"/>
+                            <feFlood flood-color="#000" flood-opacity="0.3"/>
+                            <feComposite in2="offsetBlur" operator="in"/>
+                            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Glow Background -->
+                    <circle cx="60" cy="60" r="58" fill="url(#solarenGlow)"/>
+                    <!-- Outer ring -->
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                    <!-- Sun rays -->
+                    <g stroke="url(#solarenSun)" stroke-width="3" stroke-linecap="round" filter="url(#solarenShadow)">
+                        <line x1="60" y1="10" x2="60" y2="20"/>
+                        <line x1="60" y1="100" x2="60" y2="110"/>
+                        <line x1="10" y1="60" x2="20" y2="60"/>
+                        <line x1="100" y1="60" x2="110" y2="60"/>
+                        <line x1="25" y1="25" x2="32" y2="32"/>
+                        <line x1="88" y1="88" x2="95" y2="95"/>
+                        <line x1="25" y1="95" x2="32" y2="88"/>
+                        <line x1="88" y1="32" x2="95" y2="25"/>
+                    </g>
+                    <!-- Sun core -->
+                    <circle cx="60" cy="60" r="26" fill="url(#solarenSun)"/>
+                    <!-- Letter S - مدرن و سفید -->
+                    <path d="M 50 50 Q 50 44 56 44 L 64 44 Q 70 44 70 50 Q 70 56 64 56 L 56 56 Q 50 56 50 62 Q 50 68 56 68 L 64 68 Q 70 68 70 74" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#solarenShadow)"/>
+                </svg>
+            </div>
+            <h1 class="splash__title">Solaren</h1>
+            <p class="splash__subtitle">نرم‌افزار حرفه‌ای برآورد خورشیدی</p>
+            <div class="splash__progress">
+                <div class="splash__bar"></div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="header" id="header">
+            <div class="header__inner">
+                <button class="header__menu" id="menuToggle" aria-label="منو" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="header__brand">
+                    <div class="header__icon">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="headerSun" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fde68a"/>
+                                    <stop offset="100%" stop-color="#f97316"/>
+                                </linearGradient>
+                            </defs>
+                            <g stroke="url(#headerSun)" stroke-width="2" stroke-linecap="round">
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="16" y1="26" x2="16" y2="30"/>
+                                <line x1="2" y1="16" x2="6" y2="16"/>
+                                <line x1="26" y1="16" x2="30" y2="16"/>
+                                <line x1="6" y1="6" x2="8.5" y2="8.5"/>
+                                <line x1="23.5" y1="23.5" x2="26" y2="26"/>
+                                <line x1="6" y1="26" x2="8.5" y2="23.5"/>
+                                <line x1="23.5" y1="8.5" x2="26" y2="6"/>
+                            </g>
+                            <circle cx="16" cy="16" r="8" fill="url(#headerSun)"/>
+                            <path d="M 13 13.5 Q 13 12 14.5 12 L 17.5 12 Q 19 12 19 13.5 Q 19 15 17.5 15 L 14.5 15 Q 13 15 13 16.5 Q 13 18 14.5 18 L 17.5 18 Q 19 18 19 19.5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="header__text">
+                        <h1 class="header__title" id="headerTitle">Solaren</h1>
+                        <p class="header__subtitle" id="headerSubtitle">Pro v۵.۰</p>
+                    </div>
+                </div>
+                <button class="header__action" id="notificationsBtn" aria-label="اعلان‌ها">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="header__badge" id="notifBadge" hidden></span>
+                </button>
+                <button class="header__action" id="searchBtn" aria-label="جستجو" title="جستجو (Ctrl+K)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+                <button class="header__action" id="themeToggle" aria-label="تغییر تم" title="تغییر تم (t)">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <button class="header__action" id="installBtn" aria-label="نصب" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" aria-hidden="true">
+            <div class="sidebar__overlay" data-close-sidebar></div>
+            <nav class="sidebar__panel" aria-label="منوی اصلی">
+                <div class="sidebar__header">
+                    <div class="sidebar__avatar">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="sideSun" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fde68a"/>
+                                    <stop offset="100%" stop-color="#f97316"/>
+                                </linearGradient>
+                            </defs>
+                            <g stroke="url(#sideSun)" stroke-width="2" stroke-linecap="round">
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="16" y1="26" x2="16" y2="30"/>
+                                <line x1="2" y1="16" x2="6" y2="16"/>
+                                <line x1="26" y1="16" x2="30" y2="16"/>
+                                <line x1="6" y1="6" x2="8.5" y2="8.5"/>
+                                <line x1="23.5" y1="23.5" x2="26" y2="26"/>
+                                <line x1="6" y1="26" x2="8.5" y2="23.5"/>
+                                <line x1="23.5" y1="8.5" x2="26" y2="6"/>
+                            </g>
+                            <circle cx="16" cy="16" r="8" fill="url(#sideSun)"/>
+                            <path d="M 13 13.5 Q 13 12 14.5 12 L 17.5 12 Q 19 12 19 13.5 Q 19 15 17.5 15 L 14.5 15 Q 13 15 13 16.5 Q 13 18 14.5 18 L 17.5 18 Q 19 18 19 19.5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <strong>Solaren</strong>
+                        <small>Pro v۵.۰</small>
+                    </div>
+                </div>
+
+                <div class="sidebar__body">
+                    <div class="sidebar__section">
+                        <h3 class="sidebar__section-title">داشبورد</h3>
+                        <ul class="sidebar__list">
+                            <li><a class="sidebar__link is-active" data-route="home">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                <span>خانه</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="solar-live">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                                <span>سولر زنده</span>
+                                <span style="background:linear-gradient(135deg, #f59e0b, #f97316);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar__section">
+                        <h3 class="sidebar__section-title">محاسبات</h3>
+                        <ul class="sidebar__list">
+                            <li><a class="sidebar__link" data-route="quick-estimate">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                <span>برآورد سریع</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="detailed-estimate">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+                                <span>برآورد تفصیلی</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="solar-calc">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span>ماشین‌حساب</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="recommender">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                                <span>توصیه‌گر هوشمند</span>
+                                <span style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar__section">
+                        <h3 class="sidebar__section-title">تجهیزات</h3>
+                        <ul class="sidebar__list">
+                            <li><a class="sidebar__link" data-route="panels">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                                <span>پنل‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="inverters">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <span>انورترها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="batteries">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/><line x1="6" y1="11" x2="6" y2="13"/><line x1="10" y1="11" x2="10" y2="13"/><line x1="14" y1="11" x2="14" y2="13"/></svg>
+                                <span>باتری‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="vfd">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>
+                                <span>درایو VFD</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="accessories">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                <span>لوازم جانبی</span>
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar__section">
+                        <h3 class="sidebar__section-title">مدیریت</h3>
+                        <ul class="sidebar__list">
+                            <li><a class="sidebar__link" data-route="projects">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                <span>پروژه‌ها</span>
+                                <span class="sidebar__link__count" id="projCountSidebar">۰</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="customers">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                <span>مشتریان</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="invoices">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                <span>انوایس‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="payments">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                                <span>پرداخت‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="calendar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <span>تقویم / وظایف</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="team">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                <span>تیم</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="pro-report">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                <span>گزارش حرفه‌ای</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="analytics">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <span>تحلیل داده</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="analytics-dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                <span>داشبورد نموداری</span>
+                                <span style="background:linear-gradient(135deg, #0ea5e9, #0284c7);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="crm">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="20 8 23 11 20 14"/></svg>
+                                <span>CRM و وفاداری</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="notifications">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                <span>اعلان‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="map">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                                <span>نقشه پروژه‌ها</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="reports">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                <span>گزارش سریع</span>
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar__section">
+                        <h3 class="sidebar__section-title">ابزار حرفه‌ای</h3>
+                        <ul class="sidebar__list">
+                            <li><a class="sidebar__link" data-route="wire-calc">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                <span>محاسبه کابل</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="battery-calc">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                                <span>محاسبه باتری</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="tilt-calc">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                                <span>محاسبه شیب</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="shading">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8m0 0l-4-4m4 4l4-4M5 12h14M5 12l-2 8h18l-2-8"/></svg>
+                                <span>تحلیل سایه</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="compare">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M8 21H3v-5M21 3l-7 7M3 21l7-7"/></svg>
+                                <span>مقایسه تجهیزات</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="maintenance">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span>برنامه نگهداری</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="bom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                <span>لیست تجهیزات (BOM)</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="financial">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                <span>تحلیل مالی</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="designer">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                                <span>طراح بصری</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="monitoring">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                <span>مانیتورینگ تولید</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="team">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                <span>مدیریت تیم</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="settings">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>
+                                <span>تنظیمات</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="rates">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><path d="M22 11l-1 1M3 11l1 1"/></svg>
+                                <span>نرخ افغانستان</span>
+                                <span style="background:linear-gradient(135deg, #f59e0b, #d97706);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">AFN</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="ai-assistant">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/><circle cx="12" cy="12" r="4"/></svg>
+                                <span>دستیار هوشمند</span>
+                                <span style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">AI</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="currency">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                <span>ماشین‌حساب ارزی</span>
+                                <span style="background:linear-gradient(135deg, #0ea5e9, #0284c7);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="notes">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                <span>دفترچه یادداشت</span>
+                                <span style="background:linear-gradient(135deg, #f59e0b, #d97706);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="solar-test">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                <span>تست سیستم سولر</span>
+                                <span style="background:linear-gradient(135deg, #10b981, #059669);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">جدید</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="demo">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span>حالت دمو</span>
+                                <span style="background:linear-gradient(135deg, #8b5cf6, #4f46e5);color:white;font-size:9px;padding:2px 6px;border-radius:8px;margin-right:auto;font-weight:700;">DEMO</span>
+                            </a></li>
+                            <li><a class="sidebar__link" data-route="language">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                <span>زبان / ژبه</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sidebar__footer">
+                    <strong>Solaren</strong>
+                    <span>v۵.۰ · ۱۴۰۵</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="view" id="view">
+                <!-- Fallback برای حالت بدون JavaScript -->
+                <noscript>
+                    <div style="padding:40px 20px;text-align:center;">
+                        <h1 style="color:#f59e0b;">⚡ Solaren</h1>
+                        <p>برای استفاده از اپ، JavaScript را فعال کنید.</p>
+                    </div>
+                </noscript>
+                <!-- محتوای پیش‌فرض - نمایش داده می‌شود حتی بدون JS -->
+                <div id="loadingState" style="padding:0;min-height:60vh;background:transparent;display:block;">
+                    <!-- محتوای HTML خالص - بدون نیاز به JS -->
+                    <div style="background:linear-gradient(135deg, #f59e0b 0%, #f97316 100%);color:white;padding:var(--space-6);border-radius:24px;margin-bottom:24px;position:relative;overflow:hidden;text-align:center;">
+                        <div style="position:absolute;top:-50px;left:-50px;width:200px;height:200px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(40px);"></div>
+                        <div style="position:relative;z-index:1;">
+                            <div style="display:inline-block;background:rgba(0,0,0,0.2);padding:6px 12px;border-radius:20px;font-size:12px;margin-bottom:16px;">☀️ خورشید در خدمت شما</div>
+                            <h1 style="font-size:32px;font-weight:800;margin:0 0 12px;letter-spacing:-0.5px;">برآورد حرفه‌ای سولر</h1>
+                            <p style="opacity:0.9;font-size:14px;margin:0 0 20px;line-height:1.7;">سیستم سولر خود را با دقت صنعتی محاسبه کنید، تجهیزات مناسب انتخاب کنید و فاکتور حرفه‌ای صادر کنید.</p>
+                            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+                                <a href="#quick-estimate" style="background:rgba(0,0,0,0.25);color:white;padding:10px 18px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px;backdrop-filter:blur(10px);">⚡ شروع برآورد</a>
+                                <a href="#ai-assistant" style="background:rgba(255,255,255,0.2);color:white;padding:10px 18px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);">🤖 دستیار AI</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- آمار سریع - HTML خالص -->
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;">
+                        <a href="#projects" style="background:linear-gradient(135deg, #0ea5e9, #0284c7);color:white;padding:16px;border-radius:16px;text-decoration:none;text-align:center;">
+                            <div style="font-size:11px;opacity:0.85;">پروژه‌ها</div>
+                            <div style="font-size:24px;font-weight:800;">۰</div>
+                            <div style="font-size:11px;opacity:0.85;">سیستم</div>
+                        </a>
+                        <a href="#customers" style="background:linear-gradient(135deg, #10b981, #059669);color:white;padding:16px;border-radius:16px;text-decoration:none;text-align:center;">
+                            <div style="font-size:11px;opacity:0.85;">مشتریان</div>
+                            <div style="font-size:24px;font-weight:800;">۰</div>
+                            <div style="font-size:11px;opacity:0.85;">نفر</div>
+                        </a>
+                        <a href="#invoices" style="background:linear-gradient(135deg, #f59e0b, #d97706);color:white;padding:16px;border-radius:16px;text-decoration:none;text-align:center;">
+                            <div style="font-size:11px;opacity:0.85;">فاکتورها</div>
+                            <div style="font-size:24px;font-weight:800;">۰</div>
+                            <div style="font-size:11px;opacity:0.85;">سند</div>
+                        </a>
+                        <a href="#bom" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);color:white;padding:16px;border-radius:16px;text-decoration:none;text-align:center;">
+                            <div style="font-size:11px;opacity:0.85;">BOM</div>
+                            <div style="font-size:24px;font-weight:800;">۰</div>
+                            <div style="font-size:11px;opacity:0.85;">آیتم</div>
+                        </a>
+                    </div>
+
+                    <!-- شروع سریع - HTML خالص -->
+                    <h2 style="font-size:18px;font-weight:700;color:#f8fafc;margin:24px 0 12px;display:flex;align-items:center;gap:8px;">⚡ شروع سریع</h2>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;">
+                        <a href="#quick-estimate" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:16px;border-radius:16px;text-decoration:none;text-align:center;display:block;">
+                            <div style="font-size:24px;margin-bottom:4px;">⚡</div>
+                            <div style="font-size:13px;font-weight:600;">برآورد سریع</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">محاسبه ۱ دقیقه</div>
+                        </a>
+                        <a href="#detailed-estimate" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:16px;border-radius:16px;text-decoration:none;text-align:center;display:block;">
+                            <div style="font-size:24px;margin-bottom:4px;">📋</div>
+                            <div style="font-size:13px;font-weight:600;">برآورد تفصیلی</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">با جزئیات</div>
+                        </a>
+                        <a href="#solar-calc" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:16px;border-radius:16px;text-decoration:none;text-align:center;display:block;">
+                            <div style="font-size:24px;margin-bottom:4px;">🧮</div>
+                            <div style="font-size:13px;font-weight:600;">ماشین‌حساب</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">فرمول‌های سولر</div>
+                        </a>
+                        <a href="#ai-assistant" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:16px;border-radius:16px;text-decoration:none;text-align:center;display:block;">
+                            <div style="font-size:24px;margin-bottom:4px;">🤖</div>
+                            <div style="font-size:13px;font-weight:600;">دستیار AI</div>
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">مشاوره هوشمند</div>
+                        </a>
+                    </div>
+
+                    <!-- تجهیزات -->
+                    <h2 style="font-size:18px;font-weight:700;color:#f8fafc;margin:24px 0 12px;display:flex;align-items:center;gap:8px;">🛒 تجهیزات</h2>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;">
+                        <a href="#panels" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">☀️</div>
+                            <div><div style="font-size:13px;font-weight:600;">پنل‌ها</div><div style="font-size:10px;color:#94a3b8;">خورشیدی</div></div>
+                        </a>
+                        <a href="#inverters" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">⚡</div>
+                            <div><div style="font-size:13px;font-weight:600;">اینورترها</div><div style="font-size:10px;color:#94a3b8;">هیبرید/آنگرید</div></div>
+                        </a>
+                        <a href="#batteries" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">🔋</div>
+                            <div><div style="font-size:13px;font-weight:600;">باتری‌ها</div><div style="font-size:10px;color:#94a3b8;">لیتیوم</div></div>
+                        </a>
+                        <a href="#vfd" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">⚙️</div>
+                            <div><div style="font-size:13px;font-weight:600;">درایو VFD</div><div style="font-size:10px;color:#94a3b8;">پمپ/موتور</div></div>
+                        </a>
+                    </div>
+
+                    <!-- ابزار حرفه‌ای -->
+                    <h2 style="font-size:18px;font-weight:700;color:#f8fafc;margin:24px 0 12px;display:flex;align-items:center;gap:8px;">🛠 ابزار حرفه‌ای</h2>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;">
+                        <a href="#financial" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">💰</div>
+                            <div><div style="font-size:13px;font-weight:600;">تحلیل مالی</div><div style="font-size:10px;color:#94a3b8;">ROI, NPV, IRR</div></div>
+                        </a>
+                        <a href="#bom" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">📦</div>
+                            <div><div style="font-size:13px;font-weight:600;">لیست تجهیزات</div><div style="font-size:10px;color:#94a3b8;">BOM</div></div>
+                        </a>
+                        <a href="#designer" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">🎨</div>
+                            <div><div style="font-size:13px;font-weight:600;">طراح بصری</div><div style="font-size:10px;color:#94a3b8;">روی نقشه</div></div>
+                        </a>
+                        <a href="#shading" style="background:#1c2440;border:1px solid rgba(255,255,255,0.1);color:#f8fafc;padding:14px;border-radius:14px;text-decoration:none;display:flex;align-items:center;gap:10px;">
+                            <div style="font-size:20px;">🌑</div>
+                            <div><div style="font-size:13px;font-weight:600;">تحلیل سایه</div><div style="font-size:10px;color:#94a3b8;">سایه‌اندازی</div></div>
+                        </a>
+                    </div>
+
+                    <!-- راهنما -->
+                    <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.3);border-radius:16px;padding:16px;margin-top:24px;text-align:center;">
+                        <div style="font-size:24px;margin-bottom:8px;">💡</div>
+                        <p style="color:#7dd3fc;font-size:13px;margin:0;line-height:1.7;">برای دسترسی به تمام قابلیت‌ها، اپ را در حالت PWA نصب کنید یا از منوی همبرگری استفاده کنید.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav" aria-label="ناوبری">
+            <a class="bottom-nav__item is-active" data-route="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>خانه</span>
+            </a>
+            <a class="bottom-nav__item" data-route="quick-estimate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>برآورد</span>
+            </a>
+            <a class="bottom-nav__item" data-route="inverters">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>انورتر</span>
+            </a>
+            <a class="bottom-nav__item" data-route="projects">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>پروژه</span>
+            </a>
+            <a class="bottom-nav__item" data-route="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>
+                <span>تنظیمات</span>
+            </a>
+        </nav>
+
+        <!-- Toasts -->
+        <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+        <!-- Modal -->
+        <div class="modal" id="modal" hidden>
+            <div class="modal__overlay" data-close-modal></div>
+            <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <div class="modal__handle"></div>
+                <div class="modal__header">
+                    <h3 class="modal__title" id="modalTitle">عنوان</h3>
+                    <button class="modal__close" data-close-modal aria-label="بستن">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal__body" id="modalBody"></div>
+                <div class="modal__footer" id="modalFooter"></div>
+            </div>
+        </div>
+
+        <!-- Sheet (Bottom Sheet) -->
+        <div class="sheet" id="sheet" hidden>
+            <div class="sheet__overlay" data-close-sheet></div>
+            <div class="sheet__panel" role="dialog" aria-modal="true">
+                <div class="sheet__handle"></div>
+                <div class="sheet__header">
+                    <h3 class="sheet__title" id="sheetTitle">عنوان</h3>
+                    <p class="sheet__subtitle" id="sheetSubtitle"></p>
+                </div>
+                <div class="sheet__body" id="sheetBody"></div>
+            </div>
+        </div>
+
+        <!-- Offline Banner -->
+        <div class="offline-banner" id="offlineBanner" hidden>
+            <span class="offline-banner__dot"></span>
+            <span>حالت آفلاین</span>
+        </div>
+    </div>
+
+    <script type="module" src="js-es5/app.js"></script>
+</body>
+</html>
